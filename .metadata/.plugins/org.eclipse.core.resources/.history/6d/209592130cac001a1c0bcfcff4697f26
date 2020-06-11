@@ -1,0 +1,25 @@
+package beans;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import enums.Performative;
+
+public class ACLMessage {
+	private Performative performative;
+	private AID sender;
+	private ArrayList<AID> recivers;
+	private AID replyTo;
+	private String content;
+	private Object contentObj;
+	private HashMap<String,Object> userArgs;
+	private String language;
+	private String encoding;
+	private String ontology;
+	private String protocol;
+	private String conversationId;
+	private String replyWith;
+	private String inReplyTo;
+	private String replyBy;
+
+}

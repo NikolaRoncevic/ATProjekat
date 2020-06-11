@@ -1,0 +1,25 @@
+package ws;
+
+import java.util.ArrayList;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Singleton;
+import javax.jms.Session;
+import javax.websocket.OnOpen;
+import javax.websocket.server.ServerEndpoint;
+
+import com.sun.tools.javac.util.List;
+
+@Singleton
+@ServerEndpoint("/ws")
+@LocalBean
+public class WSEndPoint {
+	
+	static List<Session> session = new ArrayList<Session>();
+	
+	@OnOpen
+	public void onOpen(Session session) {
+		if(!((ArrayList<Session>) session).contains(session))
+	}
+
+}

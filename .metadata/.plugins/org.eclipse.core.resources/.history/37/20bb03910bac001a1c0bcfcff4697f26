@@ -1,0 +1,8 @@
+package beans;
+
+import enums.Performative;
+
+public class ACLMessage {
+	private Performative performative;
+
+}

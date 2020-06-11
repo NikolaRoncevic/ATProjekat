@@ -1,0 +1,12 @@
+package ws;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Singleton;
+import javax.websocket.server.ServerEndpoint;
+
+@Singleton
+@ServerEndpoint("/ws")
+@LocalBean
+public class WSEndPoint {
+
+}

@@ -1,0 +1,16 @@
+package beans;
+
+import java.util.ArrayList;
+
+import enums.Performative;
+
+public class ACLMessage {
+	private Performative performative;
+	private AID sender;
+	private ArrayList<AID> recivers;
+	private AID replyTo;
+	private String content;
+	private Object contentObj;
+	private HashMap<String,Object> userArgs;
+
+}

@@ -1,0 +1,14 @@
+package beans;
+
+import javax.ejb.LocalBean;
+import javax.ws.rs.Path;
+import javax.ejb.Stateful;
+
+@Stateful
+@Path("/agent-center")
+@LocalBean
+public class Agent {
+	
+	private AID id;
+
+}

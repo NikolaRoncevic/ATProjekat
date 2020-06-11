@@ -1,0 +1,14 @@
+package beans;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ws.rs.Path;
+
+@Stateless
+@Path("/chat")
+@LocalBean
+public class ChatBean {
+	public String test() {
+		return "OK";
+	}
+}
