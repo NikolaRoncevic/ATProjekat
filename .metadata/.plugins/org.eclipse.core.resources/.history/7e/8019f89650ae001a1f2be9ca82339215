@@ -1,0 +1,71 @@
+package controller;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import java.util.HashMap;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import data.Data;
+import models.AID;
+import models.Agent;
+import models.AgentCenter;
+import models.AgentType;
+
+@Path("/agents")
+@LocalBean
+@Stateless
+public class AgentCenterBean {
+	
+	@GET
+	@Path("/classes")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllTypes() {
+		HashMap<String,AgentType> response = Data.getAgentTypes();
+		return Response.status(200).entity(response).build();
+	}
+	
+	@GET
+	@Path("/running")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllRunningAgenst() {
+		HashMap<String, Agent> response = Data.getAgents();
+		return Response.status(200).entity(response).build();
+	}
+	
+	@PUT
+	@Path("/running/{type}/{name}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response startAgentBasedOnTypeAndName(@PathParam("type") String type,@PathParam("name") String name) {
+		AgentType at = Data.getAgentTypes().get(type);
+		Agent agent = new Agent();
+		AID agentId = new AID();
+		InetAddress ip = null;
+		String currentIp = null;	
+        try {
+            currentIp = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+		System.out.println("Trenutna ip adresa: " + currentIp);
+		for(AgentCenter h : Data.getAgentCenters()) {
+			if(h.getAddress().equals(currentIp)) {
+				agentId.setHost(h);
+			}
+		}
+		return null;
+	}
+	
+	
+	
+
+}

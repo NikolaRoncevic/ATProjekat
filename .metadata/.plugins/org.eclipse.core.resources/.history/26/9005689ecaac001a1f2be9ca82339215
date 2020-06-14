@@ -1,0 +1,48 @@
+package data;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import models.Agent;
+import models.AgentCenter;
+import models.AgentType;
+
+@Startup
+@Singleton
+public class Data {
+	
+	private static ArrayList<AgentType> agentTypes = new ArrayList<>();
+	private static ArrayList<AgentCenter> agentCenters = new ArrayList<>();
+	private static HashMap<String, Agent> agents = new HashMap<>();
+	
+	static {
+		
+	}
+
+	public static ArrayList<AgentType> getAgentTypes() {
+		return agentTypes;
+	}
+
+	public static void setAgentTypes(ArrayList<AgentType> agentTypes) {
+		Data.agentTypes = agentTypes;
+	}
+
+	public static ArrayList<AgentCenter> getAgentCenters() {
+		return agentCenters;
+	}
+
+	public static void setAgentCenters(ArrayList<AgentCenter> agentCenters) {
+		Data.agentCenters = agentCenters;
+	}
+
+	public static HashMap<String, Agent> getAgents() {
+		return agents;
+	}
+
+	public static void setAgents(HashMap<String, Agent> agents) {
+		Data.agents = agents;
+	}
+	
+
+	
+}

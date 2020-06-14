@@ -1,0 +1,92 @@
+package controller;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import java.util.HashMap;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import data.Data;
+import models.AID;
+import models.Agent;
+import models.AgentCenter;
+import models.AgentType;
+
+@Path("/agents")
+@LocalBean
+@Stateless
+public class AgentCenterBean {
+
+	@GET
+	@Path("/classes")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllTypes() {
+		HashMap<String, AgentType> response = Data.getAgentTypes();
+		return Response.status(200).entity(response).build();
+	}
+
+	@GET
+	@Path("/running")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllRunningAgenst() {
+		HashMap<String, Agent> response = Data.getAgents();
+		return Response.status(200).entity(response).build();
+	}
+
+	@PUT
+	@Path("/running/{type}/{name}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response startAgentBasedOnTypeAndName(@PathParam("type") String type, @PathParam("name") String name) {
+		AgentType at = Data.getAgentTypes().get(type);
+		Agent agent = new Agent();
+		AID agentId = new AID();
+		InetAddress ip = null;
+		String currentIp;	
+        try {
+            ip = InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+		currentIp = ip.toString();
+	    String[] split = currentIp.split("/");
+	    currentIp=split[1];
+	    String[] split2 = currentIp.split("/n");
+	    currentIp=split2[0];
+		System.out.println("Trenutna ip adresa: " + currentIp);
+		for (AgentCenter h : Data.getAgentCenters()) {
+			if (h.getAddress().equals(currentIp)) {
+				agentId.setHost(h);
+			}
+		}
+		agentId.setName(name);
+		agentId.setType(at);
+		agent.setId(agentId);
+		return Response.status(200).entity(agent).build();
+	}
+
+	@DELETE
+	@Path("/running/{aid}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deleteAgent(@PathParam("aid") String aid) {
+		for (Agent a : Data.getAgents().values()) {
+
+			if (a.getId().getName().equals(aid)) {
+				Data.getAgents().remove(aid);
+				return Response.status(200).entity(a).build();
+			}
+		}
+		return Response.status(400).entity("Nema agenta sa tim nazivom").build();
+	}
+
+}

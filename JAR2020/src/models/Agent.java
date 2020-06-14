@@ -3,10 +3,13 @@ package models;
 import javax.ejb.Stateful;
 
 @Stateful
-public abstract class Agent {
+public class Agent {
 	
 	private AID id;
-	public abstract void handleMessage(ACLMessage message);
+	
+	public void handleMessage(ACLMessage message) {
+		
+	}
 	public AID getId() {
 		return id;
 	}

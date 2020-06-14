@@ -1,0 +1,29 @@
+package controller;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+@Singleton
+@Startup
+public class AgentCentarNodes {
+	private String masterIp = "172.17.22.17";
+	private String currentIp = null;
+	/*
+	 * @POST
+	 * 
+	 * @Path("/node")
+	 * 
+	 * @Produces(MediaType.APPLICATION_JSON) public Response
+	 */
+	@PostConstruct
+	private void init() {
+		
+		
+	}
+	
+}

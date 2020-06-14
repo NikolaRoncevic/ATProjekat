@@ -1,0 +1,20 @@
+package data;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import models.Agent;
+import models.AgentCenter;
+import models.AgentType;
+
+public class Data {
+	
+	private static ArrayList<AgentType> types = new ArrayList<>();
+	private static ArrayList<AgentCenter> agentskiCentri = new ArrayList<>();
+	private static HashMap<String, Agent> agents = new HashMap<>();
+	
+	static {
+		
+	}
+
+}
