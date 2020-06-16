@@ -1,7 +1,10 @@
 package controller;
 
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,25 +34,21 @@ import data.Data;
 import models.Agent;
 import models.AgentCenter;
 import models.AgentType;
+import util.getLocalHost;
 
 @Singleton
 @Startup
 @SuppressWarnings("unused")
 public class AgentCentarNodes {
-	private String masterIp = "172.17.22.17";
+	private String masterIp = "192.168.0.11";
 	private String currentIp = null;
 	private String alias = null;
 
 	@PostConstruct
 	private void init() {
 		AgentCenter ac = new AgentCenter();
-		InetAddress ip = null;
-		try {
-			currentIp = InetAddress.getLocalHost().getHostAddress();
-			alias = InetAddress.getLocalHost().getHostName();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		currentIp = getLocalHost.getIpAddress();
+	
 		ac.setAddress(currentIp);
 		ac.setAlias(currentIp);
 		Data.getAgentCenters().add(ac);

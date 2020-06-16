@@ -27,6 +27,7 @@ import models.AID;
 import models.Agent;
 import models.AgentCenter;
 import models.AgentType;
+import util.getLocalHost;
 
 @Path("/agents")
 @LocalBean
@@ -67,13 +68,10 @@ public class AgentCenterBean {
 			agent = new MasterAgent();
 		}
 		AID agentId = new AID();
-		InetAddress ip = null;
+		
 		String currentIp = null;
-		try {
-			currentIp = InetAddress.getLocalHost().getHostAddress();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
+		currentIp = getLocalHost.getIpAddress();
+		
 		System.out.println("Trenutna ip adresa: " + currentIp);
 		for (AgentCenter h : Data.getAgentCenters()) {
 			if (h.getAddress().equals(currentIp)) {

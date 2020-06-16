@@ -17,6 +17,7 @@ import models.AID;
 import models.Agent;
 import models.AgentCenter;
 import models.AgentType;
+import util.getLocalHost;
 
 public class CollectorAgent extends Agent {
 
@@ -64,12 +65,8 @@ public class CollectorAgent extends Agent {
 
 	private AgentCenter findHost() {
 		String currentIp = null;
-		try {
-			currentIp = InetAddress.getLocalHost().getHostAddress();
-		} catch (UnknownHostException e) {
-
-			e.printStackTrace();
-		}
+		currentIp = getLocalHost.getIpAddress();
+	
 		for (AgentCenter center : Data.getAgentCenters()) {
 			if (center.getAddress().equals(currentIp)) {
 				return center;

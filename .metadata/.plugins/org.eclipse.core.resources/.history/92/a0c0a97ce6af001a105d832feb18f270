@@ -1,0 +1,33 @@
+package util;
+
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
+
+public class getLocalHost {
+	
+	public static String getIpAddress() {
+		Enumeration e1 = null;
+		try {
+			e1 = NetworkInterface.getNetworkInterfaces();
+		} catch (SocketException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		while(e1.hasMoreElements())
+		{
+		    NetworkInterface n = (NetworkInterface) e1.nextElement();
+		    Enumeration ee = n.getInetAddresses();
+		    while (ee.hasMoreElements())
+		    {
+		        InetAddress i = (InetAddress) ee.nextElement();
+		        System.out.println(i.getHostAddress());
+		        if(i.getHostAddress().equals("192.168.0.11")) {
+		        	return i.getHostAddress();
+		        }
+		    }
+		}
+	}
+
+}

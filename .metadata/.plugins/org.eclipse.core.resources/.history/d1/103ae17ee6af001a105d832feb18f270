@@ -1,0 +1,14 @@
+package util;
+
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
+
+public class getLocalHost {
+	
+	public static String getIpAddress() {
+		return "192.168.0.11";
+	}
+
+}
