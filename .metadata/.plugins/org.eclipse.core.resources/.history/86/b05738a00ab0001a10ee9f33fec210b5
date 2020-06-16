@@ -98,7 +98,7 @@ public class AgentCenterBean {
 			if(!center.getAddress().equals(currentIp)) {
 				Agent tempic = new Agent();
 				System.out.println("http://" + center.getAddress() + ":8080/WAR2020/rest/agents/running");
-				target = client.target("http://" + center.getAddress() + ":8080/WAR2020/rest/agentsrunning");
+				target = client.target("http://" + center.getAddress() + ":8080/WAR2020/rest/agents/running");
 				response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(Data.getAgents(), MediaType.APPLICATION_JSON));
 			}
 			

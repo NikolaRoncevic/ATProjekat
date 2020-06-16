@@ -212,7 +212,7 @@ public class AgentCentarNodes {
 	}
 
 	@POST
-	@Path("/agentsrunning")
+	@Path("/agents/running")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addNewAgent(ArrayList<Agent> a) {
 		System.out.println("/agents/running" + currentIp);
