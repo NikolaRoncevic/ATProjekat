@@ -351,3 +351,12 @@ java.lang.RuntimeException
 
 !ENTRY org.jboss.ide.eclipse.as.wtp.core 1 16973825 2020-06-16 20:43:40.536
 !MESSAGE Server processes have terminated prematurely. Please check your server logs for more details. 
+
+!ENTRY org.jboss.ide.eclipse.as.core 4 0 2020-06-16 20:44:37.998
+!MESSAGE The server "WildFly 11 at 192.168.0.11" requires a JDK to run properly. The VM used to launch this server is not recognized as a valid JDK. C:\Program Files\Java\jre1.8.0_251 
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 16842760 2020-06-16 20:44:40.011
+!MESSAGE Server Starting
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 16842769 2020-06-16 20:44:48.260
+!MESSAGE Server Startup Succeeded

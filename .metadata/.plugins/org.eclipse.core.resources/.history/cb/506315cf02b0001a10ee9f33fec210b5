@@ -98,7 +98,7 @@ public class AgentCenterBean {
 		client = new ResteasyClientBuilder().build();
 		for(AgentCenter center : Data.getAgentCenters()) {
 			System.out.println("ip: " + center.getAddress());
-			target = client.target("http://" + center.getAddress() + ":8080/WAR2020/rest/agents/running");
+			target = client.target("http://" + center.getAddress() + ":8080/WAR2020/rest/node");
 			response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(agent, MediaType.APPLICATION_JSON));
 		}
 		return Response.status(200).entity(agent).build();

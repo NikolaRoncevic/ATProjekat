@@ -217,7 +217,17 @@ public class AgentCentarNodes {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response addNewAgent(Agent a) {
 		System.out.println("/agents/running" + currentIp);
-		Data.getAgents().add(a);
+		if (a.getId().getHost().getAddress().equals(currentIp)) {
+			for (AgentCenter center : Data.getAgentCenters()) {
+				ResteasyClient client = new ResteasyClientBuilder().build();
+				ResteasyWebTarget target = client
+						.target("http://" + center.getAddress() + ":8080/WAR2020/agents/running");
+				Response response = target.request(MediaType.APPLICATION_JSON)
+						.post(Entity.entity(a, MediaType.APPLICATION_JSON));
+			}
+		} else {
+			Data.getAgents().add(a);
+		}
 		return Response.status(200).build();
 
 	}
@@ -232,43 +242,38 @@ public class AgentCentarNodes {
 
 	private void addTypes(ArrayList<AgentType> agentTypes) {
 		for (AgentType at : agentTypes) {
-			Data.getAgentTypes().add(at);
+			// todo dodavanje novih tipova
 		}
 	}
 
-	@Schedules({
-
-			@Schedule(hour = "*", minute = "*", second = " 30", info = "heartbeat")
-
-	})
+	/*
+	 * @Schedules({
+	 * 
+	 * @Schedule(hour="*", minute="*", second=" 30", info="heartbeat")
+	 * 
+	 * })
+	 */
 	private void hearthBeat() {
-		System.out.println("pravim hearthbeat poziv");
-
-		if (currentIp != null && currentIp.equals(masterIp)) {
-			for (AgentCenter center : Data.getAgentCenters()) {
-				if (!center.getAddress().equals(currentIp)) {
-					ResteasyClient client = new ResteasyClientBuilder().build();
-					ResteasyWebTarget target = client.target("http://" + center.getAddress() + ":8080/WAR2020/node");
-					Response response = target.request(MediaType.APPLICATION_JSON).get();
-					if (response.getStatus() != 200) {
-						response = target.request(MediaType.APPLICATION_JSON).get();
-						if (response.getStatus() != 200) {
-							System.out.println("Cvor se ugasio: " + center.getAddress());
-							Data.getAgentCenters().remove(center);
-							for (AgentCenter center2 : Data.getAgentCenters()) {
-								if (!center2.getAddress().equals(currentIp)) {
-									client = new ResteasyClientBuilder().build();
-									target = client.target("http://" + center2.getAddress() + ":8080/WAR2020/rest/node/"
-											+ center.getAddress());
-									response = target.request(MediaType.APPLICATION_JSON).delete();
-								}
-
-							}
-						}
-					}
-				}
-			}
-		}
+		// System.out.println("pravim hearthbeat poziv");
+		/*
+		 * if (currentIp != null && currentIp.equals(masterIp)) { for (AgentCenter
+		 * center : Data.getAgentCenters()) { if
+		 * (!center.getAddress().equals(currentIp)) { ResteasyClient client = new
+		 * ResteasyClientBuilder().build(); ResteasyWebTarget target =
+		 * client.target("http://" + center.getAddress() + ":8080/WAR2020/node");
+		 * Response response = target.request(MediaType.APPLICATION_JSON).get(); if
+		 * (response.getStatus() != 200) { response =
+		 * target.request(MediaType.APPLICATION_JSON).get(); if (response.getStatus() !=
+		 * 200) { System.out.println("Cvor se ugasio: " + center.getAddress());
+		 * Data.getAgentCenters().remove(center); for (AgentCenter center2 :
+		 * Data.getAgentCenters()) { if (!center2.getAddress().equals(currentIp)) {
+		 * client = new ResteasyClientBuilder().build(); target = client.target(
+		 * "http://" + center2.getAddress() + ":8080/WAR2020/rest/node/" +
+		 * center.getAddress()); response =
+		 * target.request(MediaType.APPLICATION_JSON).delete(); }
+		 * 
+		 * } } } } } }
+		 */
 
 	}
 
