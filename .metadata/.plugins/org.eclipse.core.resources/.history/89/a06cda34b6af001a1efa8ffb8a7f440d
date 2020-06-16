@@ -1,0 +1,272 @@
+package controller;
+
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.Schedule;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+
+import com.sun.org.apache.bcel.internal.generic.NEWARRAY;
+
+import data.Data;
+import models.Agent;
+import models.AgentCenter;
+import models.AgentType;
+
+@Singleton
+@Startup
+@SuppressWarnings("unused")
+public class AgentCentarNodes {
+	private String masterIp = "172.17.22.17";
+	private String currentIp = null;
+	private String alias = null;
+
+	@PostConstruct
+	private void init() {
+		AgentCenter ac = new AgentCenter();
+		InetAddress ip = null;
+		try {
+			currentIp = InetAddress.getLocalHost().getHostAddress();
+			alias = InetAddress.getLocalHost().getHostName();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		ac.setAddress(currentIp);
+		ac.setAlias(currentIp);
+		Data.getAgentCenters().add(ac);
+		if (!currentIp.equals(masterIp)) {
+			System.out.println("nisam master pa se javljam");
+			AgentCenter acMaster = new AgentCenter(masterIp, masterIp);
+			Data.getAgentCenters().add(acMaster);
+			ResteasyClient client = null;
+			ResteasyWebTarget target = null;
+			Response response = null;
+			// javljam se masteru da sam se napravio
+			client = new ResteasyClientBuilder().build();
+			target = client.target("http://" + masterIp + ":8080/WAR2020/rest/node");
+			response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(ac, MediaType.APPLICATION_JSON));
+			// dostavljam svoje tipove agenata
+			client = new ResteasyClientBuilder().build();
+			target = client.target("http://" + masterIp + ":8080/WAR2020/rest/agents/classes");
+			response = target.request(MediaType.APPLICATION_JSON)
+					.post(Entity.entity(Data.getAgentTypes(), MediaType.APPLICATION_JSON));
+			// trazim od mastera informacije o ostalim agentskim centrima
+			client = new ResteasyClientBuilder().build();
+			target = client.target("http://" + masterIp + ":8080/WAR2020/rest/nodes");
+			response = target.request(MediaType.APPLICATION_JSON).get();
+			ArrayList<AgentCenter> newCenters = (ArrayList<AgentCenter>) response
+					.readEntity(new GenericType<List<AgentCenter>>() {
+					});
+			for (AgentCenter center : newCenters) {
+				if (!center.getAddress().equals(currentIp) && !center.getAddress().equals(masterIp)) {
+					Data.getAgentCenters().add(center);
+				}
+			}
+			client = new ResteasyClientBuilder().build();
+			target = client.target("http://" + masterIp + ":8080/WAR2020/rest/nodes");
+			response = target.request(MediaType.APPLICATION_JSON).get();
+			if (response.getStatus() != 200) {
+				response = target.request(MediaType.APPLICATION_JSON).get();
+				if (response.getStatus() != 200) {
+					// vrsim brisanje ukoliko handshake nije uspesno izvrsen
+					client = new ResteasyClientBuilder().build();
+					target = client.target("http://" + masterIp + ":8080/WAR2020/rest/node/" + alias);
+					response = target.request(MediaType.APPLICATION_JSON).delete();
+				} else {
+					HashMap<String, Agent> newAgents = (HashMap<String, Agent>) response
+							.readEntity(new GenericType<HashMap<String, Agent>>() {
+							});
+					Data.setAgents(newAgents);
+				}
+			} else {
+				HashMap<String, Agent> newAgents = (HashMap<String, Agent>) response
+						.readEntity(new GenericType<HashMap<String, Agent>>() {
+						});
+				Data.setAgents(newAgents);
+			}
+
+		}else {
+			System.out.println("Cao ja sam master cvor");
+		}
+
+	}
+
+	@POST
+	@Path("/node")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response register(AgentCenter ac) {
+		if (currentIp.equals(masterIp)) {
+			for (AgentCenter center : Data.getAgentCenters()) {
+				if (!center.getAddress().equals(currentIp)) {
+					ResteasyClient client = new ResteasyClientBuilder().build();
+					ResteasyWebTarget target = client
+							.target("http://" + center.getAddress() + ":8080/WAR2020/rest/node");
+					Response response = target.request(MediaType.APPLICATION_JSON)
+							.post(Entity.entity(ac, MediaType.APPLICATION_JSON));
+				}
+			}
+			Data.getAgentCenters().add(ac);
+			return Response.status(200).entity(ac).build();
+
+		} else {
+			Data.getAgentCenters().add(ac);
+			return Response.status(200).entity(ac).build();
+		}
+
+	}
+
+	@POST
+	@Path("/agents/classes")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deliverAgentClasses(HashMap<String, AgentType> agentTypes) {
+		if (currentIp.equals(masterIp)) {
+			addTypes(agentTypes);
+			for (AgentCenter center : Data.getAgentCenters()) {
+				if (!center.getAddress().equals(currentIp)) {
+					ResteasyClient client = new ResteasyClientBuilder().build();
+					ResteasyWebTarget target = client
+							.target("http://" + center.getAddress() + ":8080/WAR2020/rest/agents/classes");
+					Response response = target.request(MediaType.APPLICATION_JSON)
+							.post(Entity.entity(agentTypes, MediaType.APPLICATION_JSON));
+				}
+			}
+			return Response.status(200).entity("Uspesno dodati novi tipovi").build();
+
+		} else {
+			addTypes(agentTypes);
+			return Response.status(200).entity("Uspesno dodati novi tipovi").build();
+
+		}
+
+	}
+
+	@GET
+	@Path("/nodes")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAgentCenters() {
+		return Response.status(200).entity(Data.getAgentCenters()).build();
+	}
+
+	@GET
+	@Path("/agents/running")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getRunningAgents() {
+		return Response.status(200).entity(Data.getAgents()).build();
+	}
+
+	@DELETE
+	@Path("/node/{alias}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deleteAgentCenter(@PathParam("alias") String alias) {
+		if (currentIp.equals(masterIp)) {
+			for (AgentCenter center : Data.getAgentCenters()) {
+				if (center.getAddress().equals(alias)) {
+					Data.getAgentCenters().remove(center);
+					break;
+				}
+			}
+			for (AgentCenter center : Data.getAgentCenters()) {
+				if (!center.getAddress().equals(currentIp)) {
+					ResteasyClient client = new ResteasyClientBuilder().build();
+					ResteasyWebTarget target = client
+							.target("http://" + center.getAddress() + ":8080/WAR2020/rest/node/" + alias);
+					Response response = target.request(MediaType.APPLICATION_JSON).delete();
+				}
+			}
+			return Response.status(200).build();
+		} else {
+			for (AgentCenter center : Data.getAgentCenters()) {
+				if (center.getAddress().equals(alias)) {
+					Data.getAgentCenters().remove(center);
+					break;
+				}
+			}
+			return Response.status(200).build();
+		}
+	}
+
+	@POST
+	@Path("/agents/running")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response addNewAgent(Agent a) {
+		if (a.getId().getHost().getAddress().equals(currentIp)) {
+			for (AgentCenter center : Data.getAgentCenters()) {
+				ResteasyClient client = new ResteasyClientBuilder().build();
+				ResteasyWebTarget target = client
+						.target("http://" + center.getAddress() + ":8080/WAR2020/agents/running");
+				Response response = target.request(MediaType.APPLICATION_JSON)
+						.post(Entity.entity(a, MediaType.APPLICATION_JSON));
+			}
+		} else {
+			Data.getAgents().put(a.getId().getName(), a);
+		}
+		return Response.status(200).build();
+
+	}
+
+	@GET
+	@Path("/node")
+	public Response healthCheck() {
+		return Response.status(200).build();
+
+	}
+
+	private void addTypes(HashMap<String, AgentType> agentTypes) {
+		for (AgentType at : agentTypes.values()) {
+			if (!Data.getAgentTypes().containsKey(at.getName())) {
+				Data.getAgentTypes().put(at.getName(), at);
+			}
+		}
+	}
+
+	@Schedule(minute = "*/1", hour = "*")
+	private void hearthBeat() {
+		if (currentIp != null && currentIp.equals(masterIp)) {
+			for (AgentCenter center : Data.getAgentCenters()) {
+				if (!center.getAddress().equals(currentIp)) {
+					ResteasyClient client = new ResteasyClientBuilder().build();
+					ResteasyWebTarget target = client.target("http://" + center.getAddress() + ":8080/WAR2020/node");
+					Response response = target.request(MediaType.APPLICATION_JSON).get();
+					if (response.getStatus() != 200) {
+						response = target.request(MediaType.APPLICATION_JSON).get();
+						if (response.getStatus() != 200) {
+							System.out.println("Cvor se ugasio: " + center.getAddress());
+							Data.getAgentCenters().remove(center);
+							for (AgentCenter center2 : Data.getAgentCenters()) {
+								if (!center2.getAddress().equals(currentIp)) {
+									client = new ResteasyClientBuilder().build();
+									target = client.target(
+											"http://" + center2.getAddress() + ":8080/WAR2020/rest/node/" + center.getAddress());
+									response = target.request(MediaType.APPLICATION_JSON).delete();
+								}
+
+							}
+						}
+					}
+				}
+			}
+		}
+
+	}
+
+}

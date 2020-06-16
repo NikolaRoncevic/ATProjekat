@@ -1,0 +1,65 @@
+package jms;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ejb.ActivationConfigProperty;
+import javax.ejb.EJB;
+import javax.ejb.MessageDriven;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.ObjectMessage;
+import javax.websocket.Session;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+
+import data.Data;
+import models.ACLMessage;
+import models.AgentCenter;
+
+
+@MessageDriven(activationConfig = {
+		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+		@ActivationConfigProperty(propertyName = "destination", propertyValue = "java:jboss/exported/jms/queue/mojQueue") })
+public class MDBSConsumer implements MessageListener{
+
+	@Override
+	public void onMessage(Message message) {
+		ObjectMessage msg = (ObjectMessage) message;
+		System.out.println("poruka je primljena");
+		String currentIp = null;
+		try {
+			ACLMessage acl = (ACLMessage) msg.getObject();
+			currentIp = InetAddress.getLocalHost().getHostAddress();
+			host = findHost()
+		}
+		
+	}
+	
+	private AgentCenter findHost() {
+		String currentIp = null;
+		try {
+			currentIp = InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+			
+			e.printStackTrace();
+		}
+		for(AgentCenter center : Data.getAgentCenters()) {
+			if(center.getAddress().equals(currentIp)) {
+				return center;
+			}
+		}
+		return null;
+	}
+	
+	
+
+}

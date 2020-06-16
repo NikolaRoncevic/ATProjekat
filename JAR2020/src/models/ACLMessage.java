@@ -1,14 +1,18 @@
 package models;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.HashMap;
 
 import enums.Performative;
 
-public class ACLMessage {
+public class ACLMessage implements Serializable {
+	
+	
+	private static final long serialVersionUID = 1L;
+	
 	private Performative performative;
 	private AID sender;
-	private ArrayList<AID> recivers;
+	private AID[] recivers;
 	private AID replyTo;
 	private String content;
 	private Object contentObj;
@@ -26,7 +30,26 @@ public class ACLMessage {
 		
 	}
 	
-	public ACLMessage(Performative performative, AID sender, ArrayList<AID> recivers, AID replyTo, String content,
+	public ACLMessage(ACLMessage acl) {
+		this.performative  = acl.getPerformative();
+		this.sender = acl.getSender();
+		this.recivers = acl.getRecivers();
+		this.replyTo = acl.getReplyTo();
+		this.content = acl.getContent();
+		this.contentObj = acl.getContentObj();
+		this.userArgs = acl.getUserArgs();
+		this.language = acl.getLanguage();
+		this.encoding = acl.getEncoding();
+		this.ontology = acl.getOntology();
+		this.protocol = acl.getProtocol();
+		this.conversationId = acl.getConversationId();
+		this.replyWith = acl.getReplyWith();
+		this.inReplyTo = acl.getInReplyTo();
+		this.replyBy = acl.getReplyBy();
+		
+	}
+	
+	public ACLMessage(Performative performative, AID sender, AID[] recivers, AID replyTo, String content,
 			Object contentObj, HashMap<String, Object> userArgs, String language, String encoding, String ontology,
 			String protocol, String conversationId, String replyWith, String inReplyTo, String replyBy) {
 		super();
@@ -58,10 +81,10 @@ public class ACLMessage {
 	public void setSender(AID sender) {
 		this.sender = sender;
 	}
-	public ArrayList<AID> getRecivers() {
+	public AID[] getRecivers() {
 		return recivers;
 	}
-	public void setRecivers(ArrayList<AID> recivers) {
+	public void setRecivers(AID[] recivers) {
 		this.recivers = recivers;
 	}
 	public AID getReplyTo() {

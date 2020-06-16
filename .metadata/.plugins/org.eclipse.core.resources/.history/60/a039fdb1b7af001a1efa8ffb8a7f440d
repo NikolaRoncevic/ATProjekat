@@ -1,0 +1,35 @@
+package agents;
+
+import java.net.InetAddress;
+
+import data.Data;
+import enums.Performative;
+import models.ACLMessage;
+import models.AID;
+import models.Agent;
+import models.AgentCenter;
+import models.AgentType;
+
+public class PingAgent extends Agent {
+
+	@Override
+	public void handleMessage(ACLMessage message) {
+		if(message.getPerformative() == Performative.REQUEST) {
+			AID reciever = new AID();
+			reciever.setName(message.getSender().getName());
+			System.out.println("Pripremam se da posaljem poruku pongu!");
+			AgentType type = Data.getAgentTypes().get("pong");
+			reciever.setType(type);
+			AgentCenter host = findHost();
+			
+		}
+	}
+	
+	private AgentCenter findHost() {
+		String currentIp = InetAddress.getLocalHost().getHostAddress();
+		for(AgentCenter center : Data.getAgentCenters()) {
+			
+		}
+	}
+
+}

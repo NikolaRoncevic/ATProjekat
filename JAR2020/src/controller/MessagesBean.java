@@ -10,6 +10,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import jms.JMSQueue;
 import models.ACLMessage;
 
 @Path("/messages")
@@ -21,7 +22,8 @@ public class MessagesBean {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response send(ACLMessage message) {
-		return null;
+		new JMSQueue(message);
+		return Response.status(200).entity(message).build();
 	}
 	
 	@GET

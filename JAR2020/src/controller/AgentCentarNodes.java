@@ -105,7 +105,7 @@ public class AgentCentarNodes {
 			}
 
 		}else {
-			System.out.println("Cao ja sam master cvor");
+			System.out.println("Cao ja sam master cvor i trenutno ima: " + Data.getAgentCenters().size() + " agenata");
 		}
 
 	}
@@ -239,7 +239,7 @@ public class AgentCentarNodes {
 		}
 	}
 
-	@Schedule(minute = "*/1", hour = "*")
+	@Schedule(minute = "*/10", hour = "*")
 	private void hearthBeat() {
 		if (currentIp != null && currentIp.equals(masterIp)) {
 			for (AgentCenter center : Data.getAgentCenters()) {

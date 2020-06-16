@@ -1,0 +1,23 @@
+package agents;
+
+import data.Data;
+import enums.Performative;
+import jms.JMSQueue;
+import models.ACLMessage;
+import models.AID;
+import models.Agent;
+import models.AgentCenter;
+import models.AgentType;
+
+public class PongAgent extends Agent{
+	
+	@Override
+	public void handleMessage(ACLMessage message) {
+		if(message.getPerformative() == Performative.REQUEST) {
+			System.out.println("Dosao da pongujem");
+			
+			
+		}
+	}
+
+}

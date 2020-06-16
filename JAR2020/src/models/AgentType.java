@@ -1,6 +1,10 @@
 package models;
 
-public class AgentType {
+import java.io.Serializable;
+
+public class AgentType implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	private String name;
 	private String module;
 	public String getName() {

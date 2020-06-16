@@ -1,0 +1,16 @@
+package agents;
+
+import enums.Performative;
+import models.ACLMessage;
+import models.Agent;
+
+public class PingAgent extends Agent {
+
+	@Override
+	public void handleMessage(ACLMessage message) {
+		if(message.getPerformative() == Performative.REQUEST) {
+			AID reciever = new AID();
+		}
+	}
+
+}

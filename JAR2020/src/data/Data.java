@@ -6,6 +6,8 @@ import java.util.HashMap;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
+import agents.PingAgent;
+import models.AID;
 import models.Agent;
 import models.AgentCenter;
 import models.AgentType;
@@ -19,7 +21,10 @@ public class Data {
 	private static HashMap<String, Agent> agents = new HashMap<>();
 	
 	static {
-		
+		AgentType type1 = new AgentType("pong", "pong");
+		AgentType type2 = new AgentType("ping","ping");
+		agentTypes.put("pong", type1);
+		agentTypes.put("ping", type2);
 	}
 
 	public static HashMap<String,AgentType> getAgentTypes() {

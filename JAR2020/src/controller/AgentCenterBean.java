@@ -17,6 +17,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import agents.PingAgent;
+import agents.PongAgent;
 import data.Data;
 import models.AID;
 import models.Agent;
@@ -49,7 +51,12 @@ public class AgentCenterBean {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response startAgentBasedOnTypeAndName(@PathParam("type") String type, @PathParam("name") String name) {
 		AgentType at = Data.getAgentTypes().get(type);
-		Agent agent = new Agent();
+		Agent agent = null;
+		if(type.equals("ping")) {
+			agent = new PingAgent();
+		}else if(type.equals("pong")) {
+			agent = new PongAgent();
+		}
 		AID agentId = new AID();
 		InetAddress ip = null;
 		String currentIp = null;
@@ -67,6 +74,7 @@ public class AgentCenterBean {
 		agentId.setName(name);
 		agentId.setType(at);
 		agent.setId(agentId);
+		Data.getAgents().put(name, agent);
 		return Response.status(200).entity(agent).build();
 	}
 

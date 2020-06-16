@@ -1,0 +1,13 @@
+package agents;
+
+import models.ACLMessage;
+import models.Agent;
+
+public class PingAgent extends Agent {
+
+	@Override
+	public void handleMessage(ACLMessage message) {
+
+	}
+
+}
