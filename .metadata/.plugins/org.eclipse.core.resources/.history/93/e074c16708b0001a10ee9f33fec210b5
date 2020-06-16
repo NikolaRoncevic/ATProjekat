@@ -81,6 +81,8 @@ public class AgentCenterBean {
 		
 		String currentIp = null;
 		currentIp = getLocalHost.getIpAddress();
+		
+		System.out.println("Trenutna ip adresa: " + currentIp);
 		for (AgentCenter h : Data.getAgentCenters()) {
 			if (h.getAddress().equals(currentIp)) {
 				agentId.setHost(h);
@@ -99,7 +101,7 @@ public class AgentCenterBean {
 				Agent tempic = new Agent();
 				System.out.println("http://" + center.getAddress() + ":8080/WAR2020/rest/agents/running");
 				target = client.target("http://" + center.getAddress() + ":8080/WAR2020/rest/agents/running");
-				response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(Data.getAgents(), MediaType.APPLICATION_JSON));
+				response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(tempic, MediaType.APPLICATION_JSON));
 			}
 			
 		}
