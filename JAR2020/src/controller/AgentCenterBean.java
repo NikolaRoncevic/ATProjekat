@@ -7,6 +7,9 @@ import java.util.HashMap;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -28,16 +31,44 @@ import agents.PingAgent;
 import agents.PongAgent;
 import agents.PredictorAgent;
 import data.Data;
+import enums.Performative;
+import jms.JMSQueue;
+import models.ACLMessage;
 import models.AID;
 import models.Agent;
 import models.AgentCenter;
 import models.AgentType;
 import util.getLocalHost;
+import ws.WSEndPoint;
 
 @Path("/agents")
 @LocalBean
 @Stateless
 public class AgentCenterBean {
+	
+	@GET
+	@Path("/getWinningTeam/{timA}/{timB}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response search(@PathParam("timA") String timA,@PathParam("timB") String timB) {
+		ACLMessage msg = new ACLMessage();
+		Agent a = null;
+		for(Agent aa : Data.getAgents()) {
+			if(aa.getId().getType().getName().equals("collector")) {
+				a = aa;
+				break;
+			}
+		}
+		AID[] niz = new AID[1];
+		niz[0] = a.getId();
+		System.out.println(timA + " " + timB);
+		msg.setContent(timA + " " + timB);
+		msg.setRecivers(niz);
+		msg.setPerformative(Performative.REQUEST);
+		new JMSQueue(msg);
+		return Response.status(200).entity(msg).build();
+		
+		
+	}
 
 	@GET
 	@Path("/classes")
@@ -101,6 +132,13 @@ public class AgentCenterBean {
 				response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(agent, MediaType.APPLICATION_JSON));
 			}
 			
+		}
+		try {
+			Context context = new InitialContext();
+			WSEndPoint ws = (WSEndPoint) context.lookup(WSEndPoint.LOOKUP);
+			ws.echoTextMessage(agent.getId().getName());
+		} catch (NamingException e) {
+			e.printStackTrace();
 		}
 		return Response.status(200).entity(agent).build();
 	}

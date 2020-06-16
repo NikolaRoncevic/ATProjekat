@@ -25,6 +25,8 @@ public class CollectorAgent extends Agent {
 
 	@Override
 	public void handleMessage(ACLMessage message) {
+		String teamA = message.getContent().split(" ")[0];
+		String teamB = message.getContent().split(" ")[1];
 		BufferedReader reader = null;
 		if (message.getPerformative() == Performative.REQUEST) {
 			InputStream in = getClass().getClassLoader().getResourceAsStream("utakmice.txt");

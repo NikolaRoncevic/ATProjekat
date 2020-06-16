@@ -81,7 +81,7 @@ public class PredictorAgent extends Agent{
 			AID[] niz = new AID[1];
 			Agent temp = null;
 			for(Agent a : Data.getAgents()) {
-				if(a.getId().getName().equals("master")) {
+				if(a.getId().getType().getName().equals("master")) {
 					temp = a;
 				}
 			}
