@@ -96,9 +96,10 @@ public class AgentCenterBean {
 		client = new ResteasyClientBuilder().build();
 		for(AgentCenter center : Data.getAgentCenters()) {
 			if(!center.getAddress().equals(currentIp)) {
+				Agent tempic = new Agent();
 				System.out.println("http://" + center.getAddress() + ":8080/WAR2020/rest/agents/running");
 				target = client.target("http://" + center.getAddress() + ":8080/WAR2020/rest/agentsrunning");
-				response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(agent, MediaType.APPLICATION_JSON));
+				response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(Data.getAgents(), MediaType.APPLICATION_JSON));
 			}
 			
 		}

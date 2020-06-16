@@ -67,8 +67,7 @@ public class AgentCentarNodes {
 			System.out.println("javio sam se masteru da postojim " + response.getStatus());
 			// dostavljam svoje tipove agenata
 			client = new ResteasyClientBuilder().build();
-			target = client.target("http://" + masterIp + ":8080/WAR2020/rest/agentsclasses");
-			response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(Data.getAgentTypes(), MediaType.APPLICATION_JSON));
+			target = client.target("http://" + masterIp + ":8080/WAR2020/rest/agents/classes");
 			System.out.println("dostavio sam masteru svoje tipove agenata" + response.getStatus());
 			// trazim od mastera informacije o ostalim agentskim centrima
 			client = new ResteasyClientBuilder().build();
@@ -137,7 +136,7 @@ public class AgentCentarNodes {
 	}
 
 	@POST
-	@Path("/agentsclasses")
+	@Path("/agents/classes")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response deliverAgentClasses(ArrayList<AgentType> agentTypes) {
@@ -215,9 +214,9 @@ public class AgentCentarNodes {
 	@POST
 	@Path("/agentsrunning")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addNewAgent(Agent a) {
+	public Response addNewAgent(ArrayList<Agent> a) {
 		System.out.println("/agents/running" + currentIp);
-		Data.getAgents().add(a);
+		//Data.getAgents().add(a);
 		return Response.status(200).build();
 
 	}
