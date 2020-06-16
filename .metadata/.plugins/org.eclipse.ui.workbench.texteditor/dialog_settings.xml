@@ -6,6 +6,7 @@
 		<item key="wholeword" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
+			<item value="Hash"/>
 			<item value="Inet"/>
 		</list>
 		<list key="replacehistory">
