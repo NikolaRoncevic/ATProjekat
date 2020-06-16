@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Schedule;
+import javax.ejb.Schedules;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ws.rs.Consumes;
@@ -113,6 +114,7 @@ public class AgentCentarNodes {
 	@Path("/node")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response register(AgentCenter ac) {
+		System.out.println("/node " + currentIp);
 		if (currentIp.equals(masterIp)) {
 			for (AgentCenter center : Data.getAgentCenters()) {
 				if (!center.getAddress().equals(currentIp)) {
@@ -137,6 +139,7 @@ public class AgentCentarNodes {
 	@Path("/agents/classes")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deliverAgentClasses(HashMap<String, AgentType> agentTypes) {
+		System.out.println("/agents/classes" + currentIp);
 		if (currentIp.equals(masterIp)) {
 			addTypes(agentTypes);
 			for (AgentCenter center : Data.getAgentCenters()) {
@@ -162,6 +165,7 @@ public class AgentCentarNodes {
 	@Path("/nodes")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAgentCenters() {
+		System.out.println("/nodes" + currentIp);
 		return Response.status(200).entity(Data.getAgentCenters()).build();
 	}
 
@@ -169,6 +173,7 @@ public class AgentCentarNodes {
 	@Path("/agents/running")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getRunningAgents() {
+		System.out.println("/agents/running" + currentIp);
 		return Response.status(200).entity(Data.getAgents()).build();
 	}
 
@@ -176,6 +181,7 @@ public class AgentCentarNodes {
 	@Path("/node/{alias}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteAgentCenter(@PathParam("alias") String alias) {
+		System.out.println("/node/{alias}" + currentIp);
 		if (currentIp.equals(masterIp)) {
 			for (AgentCenter center : Data.getAgentCenters()) {
 				if (center.getAddress().equals(alias)) {
@@ -208,6 +214,7 @@ public class AgentCentarNodes {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response addNewAgent(Agent a) {
+		System.out.println("/agents/running" + currentIp);
 		if (a.getId().getHost().getAddress().equals(currentIp)) {
 			for (AgentCenter center : Data.getAgentCenters()) {
 				ResteasyClient client = new ResteasyClientBuilder().build();
@@ -226,6 +233,7 @@ public class AgentCentarNodes {
 	@GET
 	@Path("/node")
 	public Response healthCheck() {
+		System.out.println("/node" + currentIp);
 		return Response.status(200).build();
 
 	}
@@ -238,8 +246,11 @@ public class AgentCentarNodes {
 		}
 	}
 
-	@Schedule(minute = "*/10", hour = "*")
+	@Schedules({
+		@Schedule(hour="", minute="", second="*/30", info="heartbeat")
+	})
 	private void hearthBeat() {
+		System.out.println("pravim hearthbeat poziv");
 		if (currentIp != null && currentIp.equals(masterIp)) {
 			for (AgentCenter center : Data.getAgentCenters()) {
 				if (!center.getAddress().equals(currentIp)) {
