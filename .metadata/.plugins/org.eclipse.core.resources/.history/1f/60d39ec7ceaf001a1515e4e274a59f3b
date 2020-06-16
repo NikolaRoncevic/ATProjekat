@@ -1,0 +1,58 @@
+package data;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+
+import agents.PingAgent;
+import models.AID;
+import models.Agent;
+import models.AgentCenter;
+import models.AgentType;
+
+@Startup
+@Singleton
+public class Data {
+	
+	private static HashMap<String,AgentType> agentTypes = new HashMap<>();
+	private static ArrayList<AgentCenter> agentCenters = new ArrayList<>();
+	private static HashMap<String, Agent> agents = new HashMap<>();
+	
+	static {
+		AgentType type1 = new AgentType("pong", "pong");
+		AgentType type2 = new AgentType("ping","ping");
+		AgentType type3 = new AgentType("collector","collector");
+		agentTypes.put("pong", type1);
+		agentTypes.put("ping", type2);
+		agentTypes.put("collector",type3);
+	}
+
+	public static HashMap<String,AgentType> getAgentTypes() {
+		return agentTypes;
+	}
+
+	public static void setAgentTypes(HashMap<String,AgentType> agentTypes) {
+		Data.agentTypes = agentTypes;
+	}
+
+	public static ArrayList<AgentCenter> getAgentCenters() {
+		return agentCenters;
+	}
+
+	public static void setAgentCenters(ArrayList<AgentCenter> agentCenters) {
+		Data.agentCenters = agentCenters;
+	}
+
+	public static HashMap<String, Agent> getAgents() {
+		return agents;
+	}
+
+	public static void setAgents(HashMap<String, Agent> agents) {
+		Data.agents = agents;
+	}
+	
+
+	
+}

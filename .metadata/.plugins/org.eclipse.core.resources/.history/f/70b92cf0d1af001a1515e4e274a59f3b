@@ -1,0 +1,47 @@
+package agents;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+
+import data.Data;
+import enums.Performative;
+import models.ACLMessage;
+import models.AID;
+import models.Agent;
+import models.AgentCenter;
+
+public class PredictorAgent extends Agent{
+
+	private static final long serialVersionUID = 1L;
+
+	@Override
+	public void handleMessage(ACLMessage message) {
+		BufferedReader reader = null;
+		if (message.getPerformative() == Performative.REQUEST) {
+			System.out.println("Primio sam zahtev da prediktujem utakmice: " + message.getContent());
+			String[] lines = message.getContent().split("\n");
+		}
+	}
+
+	private AgentCenter findHost() {
+		String currentIp = null;
+		try {
+			currentIp = InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+
+			e.printStackTrace();
+		}
+		for (AgentCenter center : Data.getAgentCenters()) {
+			if (center.getAddress().equals(currentIp)) {
+				return center;
+			}
+		}
+		return null;
+	}
+
+}

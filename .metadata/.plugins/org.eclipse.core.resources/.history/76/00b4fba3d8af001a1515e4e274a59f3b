@@ -1,0 +1,105 @@
+package agents;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+
+import data.Data;
+import enums.Performative;
+import jms.JMSQueue;
+import models.ACLMessage;
+import models.AID;
+import models.Agent;
+import models.AgentCenter;
+
+public class PredictorAgent extends Agent{
+
+	private static final long serialVersionUID = 1L;
+
+	@Override
+	public void handleMessage(ACLMessage message) {
+		BufferedReader reader = null;
+		String timA = "";
+		String timB = "";
+		int pobedaA = 0;
+		int pobedaB = 0;
+		int nereseno = 0;
+		if (message.getPerformative() == Performative.REQUEST) {
+			System.out.println("Primio sam zahtev da prediktujem utakmice: " + message.getContent());
+			String[] lines = message.getContent().split("\n");
+			for(int i = 0;i<lines.length;i++) {
+				String[] details = lines[i].split(" ");
+				String tim1 = details[0];
+				String tim2 = details[1];
+				int goltim1 = Integer.parseInt(details[2]);
+				int goltim2 = Integer.parseInt(details[3]);
+				if(i ==  0) {
+					timA = tim1;
+					timB = tim2;
+					System.out.println("tim a: " + timA);
+					System.out.println("tim b: " + timB);
+				}
+				if(tim1.equals(timA)) {
+					if(goltim1 > goltim2) {
+						pobedaA++;
+					}else if(goltim1 < goltim2) {
+						pobedaB++;
+					}else {
+						nereseno++;
+					}
+				}else {
+					if(goltim1 < goltim2) {
+						pobedaA++;
+					}else if(goltim1 > goltim2) {
+						pobedaB++;
+					}else {
+						nereseno++;
+					}
+				}
+				
+			}
+			String rezultat = "";
+			if(pobedaA > pobedaB && pobedaA > nereseno) {
+				rezultat = "tim: " + timA + "bi trebao da pobedi";
+				System.out.println(rezultat);
+			}
+			if(pobedaB > pobedaA && pobedaB > nereseno) {
+				rezultat= "tim: " + timB + "bi trebao da pobedi";
+				System.out.println(rezultat);
+			}else {
+				rezultat = "Rezultat bi trebao da bude neresen";
+				System.out.println(rezultat);
+			}
+			ACLMessage newMsg = new ACLMessage();
+			newMsg.setSender(this.getId());
+			newMsg.setContent(rezultat);
+			AID[] niz = new AID[1];
+			niz[0] = Data.getAgents().get("master1").getId();
+			newMsg.setRecivers(niz);
+			newMsg.setPerformative(Performative.INFORM);
+			
+			new JMSQueue(newMsg);
+		}
+	}
+
+	private AgentCenter findHost() {
+		String currentIp = null;
+		try {
+			currentIp = InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+
+			e.printStackTrace();
+		}
+		for (AgentCenter center : Data.getAgentCenters()) {
+			if (center.getAddress().equals(currentIp)) {
+				return center;
+			}
+		}
+		return null;
+	}
+
+}

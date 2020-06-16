@@ -17,8 +17,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import agents.CollectorAgent;
+import agents.MasterAgent;
 import agents.PingAgent;
 import agents.PongAgent;
+import agents.PredictorAgent;
 import data.Data;
 import models.AID;
 import models.Agent;
@@ -56,6 +59,12 @@ public class AgentCenterBean {
 			agent = new PingAgent();
 		}else if(type.equals("pong")) {
 			agent = new PongAgent();
+		}else if(type.equals("collector")) {
+			agent = new CollectorAgent();
+		}else if(type.equals("predictor")) {
+			agent = new PredictorAgent();
+		}else if(type.equals("master")) {
+			agent = new MasterAgent();
 		}
 		AID agentId = new AID();
 		InetAddress ip = null;

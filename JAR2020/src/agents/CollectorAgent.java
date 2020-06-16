@@ -1,7 +1,13 @@
 package agents;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import data.Data;
 import enums.Performative;
@@ -14,43 +20,58 @@ import models.AgentType;
 
 public class CollectorAgent extends Agent {
 
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public void handleMessage(ACLMessage message) {
-		if(message.getPerformative() == Performative.REQUEST) {
-			AID reciever = new AID();
-			reciever.setName("pong1");
-			System.out.println("Pripremam se da posaljem poruku pongu!");
-			AgentType type = Data.getAgentTypes().get("pong");
-			reciever.setType(type);
-			AgentCenter host = findHost();
-			if(host == null) {
-				System.out.println("doslo je do greske");
-				return;
+		BufferedReader reader = null;
+		if (message.getPerformative() == Performative.REQUEST) {
+			InputStream in = getClass().getClassLoader().getResourceAsStream("utakmice.txt");
+			reader = new BufferedReader(new InputStreamReader(in));
+			String line = null;
+			String content = "";
+			try {
+				while((line = reader.readLine()) != null) {
+					content += line + "\n";
+				}
+				content = content.substring(0, content.length()-1);
+				in.close();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			reciever.setHost(host);
-			ACLMessage msg = new ACLMessage();
-			msg.setPerformative(Performative.REQUEST);
-			AID[] receivers = {reciever};
-			msg.setRecivers(receivers);
-			msg.setSender(this.getId());
-			msg.setContent(message.getContent());
-			new JMSQueue(msg);
+			ArrayList<AID> recievers = new ArrayList<>();
+			for(Agent a : Data.getAgents().values()) {
+				if(a.getId().getType().getName().equals("predictor")) {
+					recievers.add(a.getId());
+				}
+			}
+			AID[] niz = new AID[recievers.size()];
+			for(int i = 0;i<recievers.size();i++) {
+				niz[i] = recievers.get(i);
+			}
+			ACLMessage newMsg = new ACLMessage();
+			newMsg.setSender(this.getId());
+			newMsg.setContent(content);
+			newMsg.setRecivers(niz);
+			newMsg.setPerformative(Performative.REQUEST);
+			
+			new JMSQueue(newMsg);
 			
 			
-		}else if(message.getPerformative() == Performative.INFORM) {
-			System.out.println("Pong vratio odgovor");
+			System.out.println(content);
 		}
 	}
+
 	private AgentCenter findHost() {
 		String currentIp = null;
 		try {
 			currentIp = InetAddress.getLocalHost().getHostAddress();
 		} catch (UnknownHostException e) {
-			
+
 			e.printStackTrace();
 		}
-		for(AgentCenter center : Data.getAgentCenters()) {
-			if(center.getAddress().equals(currentIp)) {
+		for (AgentCenter center : Data.getAgentCenters()) {
+			if (center.getAddress().equals(currentIp)) {
 				return center;
 			}
 		}

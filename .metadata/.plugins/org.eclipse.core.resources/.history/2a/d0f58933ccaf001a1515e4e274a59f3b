@@ -1,0 +1,56 @@
+package agents;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import data.Data;
+import enums.Performative;
+import jms.JMSQueue;
+import models.ACLMessage;
+import models.AID;
+import models.Agent;
+import models.AgentCenter;
+import models.AgentType;
+
+public class CollectorAgent extends Agent {
+
+	private static final long serialVersionUID = 1L;
+
+	@Override
+	public void handleMessage(ACLMessage message) {
+		BufferedReader reader = null;
+		if (message.getPerformative() == Performative.REQUEST) {
+			InputStream in = getClass().getClassLoader().getResourceAsStream("utakmice.txt");
+			reader = new BufferedReader(new InputStreamReader(in));
+			String fileContent = null;
+			try {
+				fileContent = reader.readLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("FC " + fileContent);
+		}
+	}
+
+	private AgentCenter findHost() {
+		String currentIp = null;
+		try {
+			currentIp = InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+
+			e.printStackTrace();
+		}
+		for (AgentCenter center : Data.getAgentCenters()) {
+			if (center.getAddress().equals(currentIp)) {
+				return center;
+			}
+		}
+		return null;
+	}
+}
