@@ -214,6 +214,7 @@ public class AgentCentarNodes {
 	@POST
 	@Path("/agents/running")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
 	public Response addNewAgent(Agent a) {
 		System.out.println("/agents/running" + currentIp);
 		Data.getAgents().add(a);
@@ -246,12 +247,10 @@ public class AgentCentarNodes {
 		if (currentIp != null && currentIp.equals(masterIp)) {
 			for (AgentCenter center : Data.getAgentCenters()) {
 				if (!center.getAddress().equals(currentIp)) {
-					System.out.println("prvi put probam");
 					ResteasyClient client = new ResteasyClientBuilder().build();
-					ResteasyWebTarget target = client.target("http://" + center.getAddress() + ":8080/WAR2020/rest/node");
+					ResteasyWebTarget target = client.target("http://" + center.getAddress() + ":8080/WAR2020/node");
 					Response response = target.request(MediaType.APPLICATION_JSON).get();
 					if (response.getStatus() != 200) {
-						System.out.println("drugi put probam");
 						response = target.request(MediaType.APPLICATION_JSON).get();
 						if (response.getStatus() != 200) {
 							System.out.println("Cvor se ugasio: " + center.getAddress());
