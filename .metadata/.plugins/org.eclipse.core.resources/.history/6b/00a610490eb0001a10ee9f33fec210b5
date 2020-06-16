@@ -232,7 +232,7 @@ public class AgentCentarNodes {
 
 	private void addTypes(ArrayList<AgentType> agentTypes) {
 		for (AgentType at : agentTypes) {
-			//Data.getAgentTypes().add(at);
+			Data.getAgentTypes().add(at);
 		}
 	}
 

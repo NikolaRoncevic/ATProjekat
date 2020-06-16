@@ -64,7 +64,6 @@ public class MDBSConsumer implements MessageListener {
 				if(agents.get(i).getId().getHost().getAddress().equals(getLocalHost.getIpAddress())) {
 					agents.get(i).handleMessage(newMsg);
 				}else {
-					System.out.println("saljem poruku drugom serveru: " + agents.get(i).getId().getHost().getAddress());
 					ResteasyClient client = null;
 					ResteasyWebTarget target = null;
 					Response response = null;

@@ -20,7 +20,7 @@ public class WSEndPoint {
 
 static List<Session> sessions = new ArrayList<Session>();
 	
-	public static String LOOKUP = "java:app/WAR2020/WSEndPoint!ws.WSEndPoint";
+	public static String LOOKUP = "java:app/ATProjWAR/WSEndPoint!ws.WSEndPoint";
 	
 	@OnOpen
 	public void onOpen(Session session) {

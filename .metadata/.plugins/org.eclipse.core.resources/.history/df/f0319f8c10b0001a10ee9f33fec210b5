@@ -20,7 +20,8 @@ public class WSEndPoint {
 
 static List<Session> sessions = new ArrayList<Session>();
 	
-	public static String LOOKUP = "java:app/WAR2020/WSEndPoint!ws.WSEndPoint";
+	//@EJB
+	//UserBean chat;
 	
 	@OnOpen
 	public void onOpen(Session session) {

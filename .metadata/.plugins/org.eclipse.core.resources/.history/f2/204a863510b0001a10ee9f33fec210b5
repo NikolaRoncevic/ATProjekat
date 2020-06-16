@@ -64,14 +64,13 @@ public class MDBSConsumer implements MessageListener {
 				if(agents.get(i).getId().getHost().getAddress().equals(getLocalHost.getIpAddress())) {
 					agents.get(i).handleMessage(newMsg);
 				}else {
-					System.out.println("saljem poruku drugom serveru: " + agents.get(i).getId().getHost().getAddress());
 					ResteasyClient client = null;
 					ResteasyWebTarget target = null;
 					Response response = null;
 					client = new ResteasyClientBuilder().build();
-					System.out.println("http://" + agents.get(i).getId().getHost().getAddress() + ":8080/WAR2020/rest/agents/running");
-					target = client.target("http://" + agents.get(i).getId().getHost().getAddress() + ":8080/WAR2020/rest/agentsrunning");
-					response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(newMsg, MediaType.APPLICATION_JSON));
+					System.out.println("http://" + agents.get(i).getHost().getAddress() + ":8080/WAR2020/rest/agents/running");
+					target = client.target("http://" + center.getAddress() + ":8080/WAR2020/rest/agentsrunning");
+					response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(agent, MediaType.APPLICATION_JSON));
 				}
 				
 

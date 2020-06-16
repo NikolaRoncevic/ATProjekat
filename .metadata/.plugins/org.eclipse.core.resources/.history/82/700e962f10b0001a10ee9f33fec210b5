@@ -20,11 +20,6 @@ import javax.jms.ObjectMessage;
 import javax.websocket.Session;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
 import agents.PingAgent;
 import data.Data;
@@ -61,19 +56,7 @@ public class MDBSConsumer implements MessageListener {
 				newMsg.setRecivers(new AID[] { agents.get(i).getId() });
 				System.out
 						.println("Trenutni agent kome ce se pozvati handleMessage: " + agents.get(i).getId().getName());
-				if(agents.get(i).getId().getHost().getAddress().equals(getLocalHost.getIpAddress())) {
-					agents.get(i).handleMessage(newMsg);
-				}else {
-					System.out.println("saljem poruku drugom serveru: " + agents.get(i).getId().getHost().getAddress());
-					ResteasyClient client = null;
-					ResteasyWebTarget target = null;
-					Response response = null;
-					client = new ResteasyClientBuilder().build();
-					System.out.println("http://" + agents.get(i).getId().getHost().getAddress() + ":8080/WAR2020/rest/agents/running");
-					target = client.target("http://" + agents.get(i).getId().getHost().getAddress() + ":8080/WAR2020/rest/agentsrunning");
-					response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(newMsg, MediaType.APPLICATION_JSON));
-				}
-				
+				agents.get(i).handleMessage(newMsg);
 
 			}
 
