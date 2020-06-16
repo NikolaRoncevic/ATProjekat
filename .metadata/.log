@@ -653,3 +653,24 @@ java.util.concurrent.TimeoutException
 	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:657)
 	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:594)
 	at org.eclipse.equinox.launcher.Main.run(Main.java:1447)
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 16842776 2020-06-16 22:42:12.618
+!MESSAGE Server shutting down
+
+!ENTRY org.jboss.ide.eclipse.as.wtp.core 1 16973825 2020-06-16 22:42:13.912
+!MESSAGE Server processes have terminated prematurely. Please check your server logs for more details. 
+
+!ENTRY org.jboss.ide.eclipse.as.core 4 0 2020-06-16 22:42:19.743
+!MESSAGE The server "WildFly 11 at 192.168.0.11" requires a JDK to run properly. The VM used to launch this server is not recognized as a valid JDK. C:\Program Files\Java\jre1.8.0_251 
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 16842760 2020-06-16 22:42:21.863
+!MESSAGE Server Starting
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 16842769 2020-06-16 22:42:36.232
+!MESSAGE Server Startup Succeeded
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 16842776 2020-06-16 22:57:31.731
+!MESSAGE Server shutting down
+
+!ENTRY org.jboss.ide.eclipse.as.wtp.core 1 16973825 2020-06-16 22:57:32.020
+!MESSAGE Server processes have terminated prematurely. Please check your server logs for more details. 
