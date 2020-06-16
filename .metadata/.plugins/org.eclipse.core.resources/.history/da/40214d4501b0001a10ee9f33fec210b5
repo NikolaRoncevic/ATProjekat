@@ -105,6 +105,8 @@ public class AgentCentarNodes {
 			}
 			System.out.println("Povukao sam sa mastera sve ostale agente " + response.getStatus());
 
+		} else {
+			System.out.println("Cao ja sam master cvor i trenutno ima: " + Data.getAgentCenters().size() + " centara");
 		}
 
 	}

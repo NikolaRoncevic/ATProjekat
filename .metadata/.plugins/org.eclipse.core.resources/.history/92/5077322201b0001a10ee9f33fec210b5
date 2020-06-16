@@ -68,6 +68,8 @@ public class AgentCentarNodes {
 			// dostavljam svoje tipove agenata
 			client = new ResteasyClientBuilder().build();
 			target = client.target("http://" + masterIp + ":8080/WAR2020/rest/agents/classes");
+			response = target.request(MediaType.APPLICATION_JSON)
+					.post(Entity.entity(Data.getAgentTypes(), MediaType.APPLICATION_JSON));
 			System.out.println("dostavio sam masteru svoje tipove agenata" + response.getStatus());
 			// trazim od mastera informacije o ostalim agentskim centrima
 			client = new ResteasyClientBuilder().build();
@@ -88,6 +90,7 @@ public class AgentCentarNodes {
 			if (response.getStatus() != 200) {
 				response = target.request(MediaType.APPLICATION_JSON).get();
 				if (response.getStatus() != 200) {
+					// vrsim brisanje ukoliko handshake nije uspesno izvrsen
 					client = new ResteasyClientBuilder().build();
 					target = client.target("http://" + masterIp + ":8080/WAR2020/rest/node/" + alias);
 					response = target.request(MediaType.APPLICATION_JSON).delete();
@@ -103,8 +106,10 @@ public class AgentCentarNodes {
 						});
 				Data.setAgents(newAgents);
 			}
-			System.out.println("Povukao sam sa mastera sve ostale agente " + response.getStatus());
+			System.out.println("Povukao sam sa mastera sve ostale agente" + response.getStatus());
 
+		} else {
+			System.out.println("Cao ja sam master cvor i trenutno ima: " + Data.getAgentCenters().size() + " centara");
 		}
 
 	}
@@ -145,9 +150,9 @@ public class AgentCentarNodes {
 			addTypes(agentTypes);
 			for (AgentCenter center : Data.getAgentCenters()) {
 				if (!center.getAddress().equals(currentIp)) {
-					ResteasyClient client = new ResteasyClientBuilder().build();
-					ResteasyWebTarget target = client
-							.target("http://" + center.getAddress() + ":8080/WAR2020/rest/agents/classes");
+					//ResteasyClient client = new ResteasyClientBuilder().build();
+					//ResteasyWebTarget target = client
+							//.target("http://" + center.getAddress() + ":8080/WAR2020/rest/agents/classes");
 				}
 			}
 			return Response.status(200).entity("Uspesno dodati novi tipovi").build();
