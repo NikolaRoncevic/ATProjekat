@@ -43,18 +43,21 @@ public class MDBSConsumer implements MessageListener {
 			AgentCenter host = findHost();
 			List<Agent> agents = new ArrayList<>();
 			for (AID aid : acl.getRecivers()) {
-				Agent agent = Data.getAgents().get(aid.getName());
-				if (agent != null) {
-					agents.add(agent);
+				Agent agent = null;
+				for (Agent a : Data.getAgents()) {
+					if (a.getId().getName().equals(aid.getName())) {
+						agents.add(a);	
+					}
 				}
 			}
 
 			for (int i = 0; i < agents.size(); i++) {
 				ACLMessage newMsg = new ACLMessage(acl);
 				newMsg.setRecivers(new AID[] { agents.get(i).getId() });
-				System.out.println("Trenutni agent kome ce se pozvati handleMessage: " + agents.get(i).getId().getName());
+				System.out
+						.println("Trenutni agent kome ce se pozvati handleMessage: " + agents.get(i).getId().getName());
 				agents.get(i).handleMessage(newMsg);
-				
+
 			}
 
 		} catch (Exception e) {

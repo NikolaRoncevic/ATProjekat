@@ -79,7 +79,13 @@ public class PredictorAgent extends Agent{
 			newMsg.setSender(this.getId());
 			newMsg.setContent(rezultat);
 			AID[] niz = new AID[1];
-			niz[0] = Data.getAgents().get("master1").getId();
+			Agent temp = null;
+			for(Agent a : Data.getAgents()) {
+				if(a.getId().getName().equals("master")) {
+					temp = a;
+				}
+			}
+			niz[0] = temp.getId();
 			newMsg.setRecivers(niz);
 			newMsg.setPerformative(Performative.INFORM);
 			

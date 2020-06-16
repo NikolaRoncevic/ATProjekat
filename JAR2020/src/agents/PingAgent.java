@@ -24,7 +24,12 @@ public class PingAgent extends Agent {
 			AID reciever = new AID();
 			reciever.setName("pong1");
 			System.out.println("Pripremam se da posaljem poruku pongu!");
-			AgentType type = Data.getAgentTypes().get("pong");
+			AgentType type = null;
+			for(AgentType atype : Data.getAgentTypes()) {
+				if(atype.getName().equals("pong")) {
+					type = atype;
+				}
+			}
 			reciever.setType(type);
 			AgentCenter host = findHost();
 			if(host == null) {

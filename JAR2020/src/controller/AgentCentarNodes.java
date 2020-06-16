@@ -5,7 +5,6 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -39,6 +38,7 @@ import util.getLocalHost;
 
 @Singleton
 @Startup
+@Path("")
 @SuppressWarnings("unused")
 public class AgentCentarNodes {
 	private String masterIp = "192.168.0.11";
@@ -64,11 +64,13 @@ public class AgentCentarNodes {
 			client = new ResteasyClientBuilder().build();
 			target = client.target("http://" + masterIp + ":8080/WAR2020/rest/node");
 			response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(ac, MediaType.APPLICATION_JSON));
+			System.out.println("javio sam se masteru da postojim " + response.getStatus());
 			// dostavljam svoje tipove agenata
 			client = new ResteasyClientBuilder().build();
 			target = client.target("http://" + masterIp + ":8080/WAR2020/rest/agents/classes");
 			response = target.request(MediaType.APPLICATION_JSON)
 					.post(Entity.entity(Data.getAgentTypes(), MediaType.APPLICATION_JSON));
+			System.out.println("dostavio sam masteru svoje tipove agenata" + response.getStatus());
 			// trazim od mastera informacije o ostalim agentskim centrima
 			client = new ResteasyClientBuilder().build();
 			target = client.target("http://" + masterIp + ":8080/WAR2020/rest/nodes");
@@ -81,6 +83,7 @@ public class AgentCentarNodes {
 					Data.getAgentCenters().add(center);
 				}
 			}
+			System.out.println("Povukao sam sa mastera sve ostale centre" + response.getStatus());
 			client = new ResteasyClientBuilder().build();
 			target = client.target("http://" + masterIp + ":8080/WAR2020/rest/nodes");
 			response = target.request(MediaType.APPLICATION_JSON).get();
@@ -92,20 +95,21 @@ public class AgentCentarNodes {
 					target = client.target("http://" + masterIp + ":8080/WAR2020/rest/node/" + alias);
 					response = target.request(MediaType.APPLICATION_JSON).delete();
 				} else {
-					HashMap<String, Agent> newAgents = (HashMap<String, Agent>) response
-							.readEntity(new GenericType<HashMap<String, Agent>>() {
+					ArrayList<Agent> newAgents = (ArrayList<Agent>) response
+							.readEntity(new GenericType<ArrayList<Agent>>() {
 							});
 					Data.setAgents(newAgents);
 				}
 			} else {
-				HashMap<String, Agent> newAgents = (HashMap<String, Agent>) response
-						.readEntity(new GenericType<HashMap<String, Agent>>() {
+				ArrayList<Agent> newAgents = (ArrayList<Agent>) response
+						.readEntity(new GenericType<ArrayList<Agent>>() {
 						});
 				Data.setAgents(newAgents);
 			}
+			System.out.println("Povukao sam sa mastera sve ostale agente" + response.getStatus());
 
 		}else {
-			System.out.println("Cao ja sam master cvor i trenutno ima: " + Data.getAgentCenters().size() + " agenata");
+			System.out.println("Cao ja sam master cvor i trenutno ima: " + Data.getAgentCenters().size() + " centara");
 		}
 
 	}
@@ -118,6 +122,7 @@ public class AgentCentarNodes {
 		if (currentIp.equals(masterIp)) {
 			for (AgentCenter center : Data.getAgentCenters()) {
 				if (!center.getAddress().equals(currentIp)) {
+					System.out.println("usao da saljem sranja");
 					ResteasyClient client = new ResteasyClientBuilder().build();
 					ResteasyWebTarget target = client
 							.target("http://" + center.getAddress() + ":8080/WAR2020/rest/node");
@@ -138,7 +143,7 @@ public class AgentCentarNodes {
 	@POST
 	@Path("/agents/classes")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deliverAgentClasses(HashMap<String, AgentType> agentTypes) {
+	public Response deliverAgentClasses(ArrayList<AgentType> agentTypes) {
 		System.out.println("/agents/classes" + currentIp);
 		if (currentIp.equals(masterIp)) {
 			addTypes(agentTypes);
@@ -224,7 +229,7 @@ public class AgentCentarNodes {
 						.post(Entity.entity(a, MediaType.APPLICATION_JSON));
 			}
 		} else {
-			Data.getAgents().put(a.getId().getName(), a);
+			Data.getAgents().add(a);
 		}
 		return Response.status(200).build();
 
@@ -238,20 +243,22 @@ public class AgentCentarNodes {
 
 	}
 
-	private void addTypes(HashMap<String, AgentType> agentTypes) {
-		for (AgentType at : agentTypes.values()) {
-			if (!Data.getAgentTypes().containsKey(at.getName())) {
-				Data.getAgentTypes().put(at.getName(), at);
-			}
+	private void addTypes(ArrayList<AgentType> agentTypes) {
+		for (AgentType at : agentTypes) {
+			//todo dodavanje novih tipova
 		}
 	}
 
-	@Schedules({
-		@Schedule(hour="", minute="", second="*/30", info="heartbeat")
-	})
+	/*
+	 * @Schedules({
+	 * 
+	 * @Schedule(hour="*", minute="*", second="
+	 30", info="heartbeat")
+
+	})*/
 	private void hearthBeat() {
-		System.out.println("pravim hearthbeat poziv");
-		if (currentIp != null && currentIp.equals(masterIp)) {
+		//System.out.println("pravim hearthbeat poziv");
+		/*if (currentIp != null && currentIp.equals(masterIp)) {
 			for (AgentCenter center : Data.getAgentCenters()) {
 				if (!center.getAddress().equals(currentIp)) {
 					ResteasyClient client = new ResteasyClientBuilder().build();
@@ -275,7 +282,7 @@ public class AgentCentarNodes {
 					}
 				}
 			}
-		}
+		}*/
 
 	}
 

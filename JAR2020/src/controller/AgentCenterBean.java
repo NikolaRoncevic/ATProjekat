@@ -2,7 +2,7 @@ package controller;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.ejb.LocalBean;
@@ -38,7 +38,7 @@ public class AgentCenterBean {
 	@Path("/classes")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllTypes() {
-		HashMap<String, AgentType> response = Data.getAgentTypes();
+		ArrayList<AgentType> response = Data.getAgentTypes();
 		return Response.status(200).entity(response).build();
 	}
 
@@ -46,7 +46,7 @@ public class AgentCenterBean {
 	@Path("/running")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllRunningAgenst() {
-		HashMap<String, Agent> response = Data.getAgents();
+		ArrayList<Agent> response = Data.getAgents();
 		return Response.status(200).entity(response).build();
 	}
 
@@ -54,7 +54,12 @@ public class AgentCenterBean {
 	@Path("/running/{type}/{name}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response startAgentBasedOnTypeAndName(@PathParam("type") String type, @PathParam("name") String name) {
-		AgentType at = Data.getAgentTypes().get(type);
+		AgentType at = null;
+		for(AgentType att : Data.getAgentTypes()) {
+			if(att.getName().contentEquals(type)) {
+				at = att; 
+			}
+		}
 		Agent agent = null;
 		if(type.equals("ping")) {
 			agent = new PingAgent();
@@ -81,7 +86,7 @@ public class AgentCenterBean {
 		agentId.setName(name);
 		agentId.setType(at);
 		agent.setId(agentId);
-		Data.getAgents().put(name, agent);
+		Data.getAgents().add(agent);
 		return Response.status(200).entity(agent).build();
 	}
 
@@ -89,10 +94,10 @@ public class AgentCenterBean {
 	@Path("/running/{aid}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteAgent(@PathParam("aid") String aid) {
-		for (Agent a : Data.getAgents().values()) {
+		for (Agent a : Data.getAgents()) {
 
 			if (a.getId().getName().equals(aid)) {
-				Data.getAgents().remove(aid);
+				Data.getAgents().remove(a);
 				return Response.status(200).entity(a).build();
 			}
 		}

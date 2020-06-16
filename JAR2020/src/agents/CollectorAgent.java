@@ -41,7 +41,7 @@ public class CollectorAgent extends Agent {
 				e.printStackTrace();
 			}
 			ArrayList<AID> recievers = new ArrayList<>();
-			for(Agent a : Data.getAgents().values()) {
+			for(Agent a : Data.getAgents()) {
 				if(a.getId().getType().getName().equals("predictor")) {
 					recievers.add(a.getId());
 				}

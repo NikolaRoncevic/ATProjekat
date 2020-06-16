@@ -1,3 +1,4 @@
 create-server=true
 eclipse.preferences.version=1
+host-names=localhost|*|192.168.0.11|*|
 show-on-activity=false

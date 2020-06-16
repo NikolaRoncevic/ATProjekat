@@ -19,19 +19,15 @@ public class PongAgent extends Agent{
 	@Override
 	public void handleMessage(ACLMessage message) {
 		if(message.getPerformative() == Performative.REQUEST) {
-			Agent recieverAgent = Data.getAgents().get("ping1");
+			Agent recieverAgent = null;
+			for(Agent a : Data.getAgents()) {
+				if(a.getId().getName().equals("ping")) {
+					recieverAgent = a;
+				}
+			}
 			
 			AID reciever = recieverAgent.getId();
-			//reciever.setName("pong1");
 			System.out.println("Pripremam se da posaljem poruku pingu!");
-			//AgentType type = Data.getAgentTypes().get("pong");
-			//reciever.setType(type);
-			//AgentCenter host = findHost();
-			//if(host == null) {
-			//	System.out.println("doslo je do greske");
-			//	return;
-			//}
-			//reciever.setHost(host);
 			ACLMessage msg = new ACLMessage();
 			msg.setPerformative(Performative.INFORM);
 			AID[] receivers = {reciever};

@@ -1,0 +1,102 @@
+package controller;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import agents.CollectorAgent;
+import agents.MasterAgent;
+import agents.PingAgent;
+import agents.PongAgent;
+import agents.PredictorAgent;
+import data.Data;
+import models.AID;
+import models.Agent;
+import models.AgentCenter;
+import models.AgentType;
+import util.getLocalHost;
+
+@Path("/agents")
+@LocalBean
+@Stateless
+public class AgentCenterBean {
+
+	@GET
+	@Path("/classes")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllTypes() {
+		ArrayList<AgentType> response = Data.getAgentTypes();
+		return Response.status(200).entity(response).build();
+	}
+
+	@GET
+	@Path("/running")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllRunningAgenst() {
+		ArrayList<Agent> response = Data.getAgents();
+		return Response.status(200).entity(response).build();
+	}
+
+	@PUT
+	@Path("/running/{type}/{name}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response startAgentBasedOnTypeAndName(@PathParam("type") String type, @PathParam("name") String name) {
+		AgentType at = Data.getAgentTypes().get(type);
+		Agent agent = null;
+		if(type.equals("ping")) {
+			agent = new PingAgent();
+		}else if(type.equals("pong")) {
+			agent = new PongAgent();
+		}else if(type.equals("collector")) {
+			agent = new CollectorAgent();
+		}else if(type.equals("predictor")) {
+			agent = new PredictorAgent();
+		}else if(type.equals("master")) {
+			agent = new MasterAgent();
+		}
+		AID agentId = new AID();
+		
+		String currentIp = null;
+		currentIp = getLocalHost.getIpAddress();
+		
+		System.out.println("Trenutna ip adresa: " + currentIp);
+		for (AgentCenter h : Data.getAgentCenters()) {
+			if (h.getAddress().equals(currentIp)) {
+				agentId.setHost(h);
+			}
+		}
+		agentId.setName(name);
+		agentId.setType(at);
+		agent.setId(agentId);
+		Data.getAgents().put(name, agent);
+		return Response.status(200).entity(agent).build();
+	}
+
+	@DELETE
+	@Path("/running/{aid}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deleteAgent(@PathParam("aid") String aid) {
+		for (Agent a : Data.getAgents().values()) {
+
+			if (a.getId().getName().equals(aid)) {
+				Data.getAgents().remove(aid);
+				return Response.status(200).entity(a).build();
+			}
+		}
+		return Response.status(400).entity("Nema agenta sa tim nazivom").build();
+	}
+
+}

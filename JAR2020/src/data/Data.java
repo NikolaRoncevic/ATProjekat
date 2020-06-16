@@ -15,29 +15,29 @@ import models.AgentType;
 @Startup
 @Singleton
 public class Data {
-	
-	private static HashMap<String,AgentType> agentTypes = new HashMap<>();
+
+	private static ArrayList<AgentType> agentTypes = new ArrayList<>();
 	private static ArrayList<AgentCenter> agentCenters = new ArrayList<>();
-	private static HashMap<String, Agent> agents = new HashMap<>();
-	
+	private static ArrayList<Agent> agents = new ArrayList<>();
+
 	static {
 		AgentType type1 = new AgentType("pong", "pong");
-		AgentType type2 = new AgentType("ping","ping");
-		AgentType type3 = new AgentType("collector","collector");
-		AgentType type4 = new AgentType("predictor","predictor");
-		AgentType type5 = new AgentType("master","master");
-		agentTypes.put("pong", type1);
-		agentTypes.put("ping", type2);
-		agentTypes.put("collector",type3);
-		agentTypes.put("predictor",type4);
-		agentTypes.put("master",type5);
+		AgentType type2 = new AgentType("ping", "ping");
+		AgentType type3 = new AgentType("collector", "collector");
+		AgentType type4 = new AgentType("predictor", "predictor");
+		AgentType type5 = new AgentType("master", "master");
+		agentTypes.add(type1);
+		agentTypes.add(type2);
+		agentTypes.add(type3);
+		agentTypes.add(type4);
+		agentTypes.add(type5);
 	}
 
-	public static HashMap<String,AgentType> getAgentTypes() {
+	public static ArrayList<AgentType> getAgentTypes() {
 		return agentTypes;
 	}
 
-	public static void setAgentTypes(HashMap<String,AgentType> agentTypes) {
+	public static void setAgentTypes(ArrayList<AgentType> agentTypes) {
 		Data.agentTypes = agentTypes;
 	}
 
@@ -49,14 +49,14 @@ public class Data {
 		Data.agentCenters = agentCenters;
 	}
 
-	public static HashMap<String, Agent> getAgents() {
+	public static ArrayList<Agent> getAgents() {
 		return agents;
 	}
 
-	public static void setAgents(HashMap<String, Agent> agents) {
+	public static void setAgents(ArrayList<Agent> agents) {
 		Data.agents = agents;
 	}
-	
 
 	
+
 }
