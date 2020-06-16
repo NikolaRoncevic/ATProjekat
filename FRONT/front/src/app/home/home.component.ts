@@ -28,7 +28,7 @@ export class HomeComponent implements OnInit {
 
       }
 
-      this.socket.onmessage = function (msg) {
+      this.socket.onmessage = (msg) => {
         console.log('Dodat novi agent: ' + msg.data);
         this.getAgents();
 
